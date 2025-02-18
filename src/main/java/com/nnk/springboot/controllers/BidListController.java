@@ -41,6 +41,7 @@ public class BidListController {
         return "redirect:/bidList/list";
     }
 
+
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
 
