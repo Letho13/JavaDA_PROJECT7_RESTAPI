@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -18,7 +19,7 @@ public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "TradeId")
-    private Integer tradeId;
+    private Integer id;
 
     @NotBlank(message = "Account is mandatory")
     private String account;
@@ -26,20 +27,20 @@ public class Trade {
     @NotBlank(message = "Type is mandatory")
     private String type;
 
-    private Double buyQuantity;
-    private Double sellQuantity;
-    private Double buyPrice;
-    private Double sellPrice;
+    private double buyQuantity;
+    private double sellQuantity;
+    private double buyPrice;
+    private double sellPrice;
     private String benchmark;
-    private Timestamp tradeDate;
+    private LocalDateTime tradeDate;
     private String security;
     private String status;
     private String trader;
     private String book;
     private String creationName;
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
     private String revisionName;
-    private Timestamp revisionDate;
+    private LocalDateTime revisionDate;
     private String dealName;
     private String dealType;
     private String sourceListId;

@@ -2,8 +2,7 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.service.RatingService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,11 +17,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Controller
 public class RatingController {
 
-    RatingService ratingService;
+    private final RatingService ratingService;
 
     // TODO: Inject Rating service
 
@@ -35,12 +34,13 @@ public class RatingController {
     }
 
     @GetMapping("/rating/add")
-    public String addRatingForm(Rating rating) {
+    public String addRatingForm(Rating rating, Model model) {
+        model.addAttribute("rating",rating);
         return "rating/add";
     }
 
     @PostMapping("/rating/validate")
-    public String validate(@Valid Rating rating, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String validate(@Valid Rating rating, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
             return "rating/add";
@@ -48,6 +48,7 @@ public class RatingController {
 
         ratingService.addRating(rating);
         redirectAttributes.addFlashAttribute("successMessage", "Rating ajouté avec succès !");
+        model.addAttribute("ratings",rating);
         // TODO: check data valid and save to db, after saving return Rating list
         return "redirect:/rating/add";
     }

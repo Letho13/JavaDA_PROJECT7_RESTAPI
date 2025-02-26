@@ -1,25 +1,41 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+@Slf4j
+//@RequiredArgsConstructor
 @Controller
-@RequestMapping("app")
+//@RequestMapping("")
 public class LoginController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    @GetMapping("login")
-    public ModelAndView login() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("login");
-        return mav;
+    public LoginController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
+
+    @GetMapping("/login")
+    public String getLoginPage() {
+        return "login";
+    }
+
+//    @GetMapping("/login")
+//    public ModelAndView login() {
+//        ModelAndView mav = new ModelAndView();
+//        logger.info("Affichage de la page de login");
+//        mav.setViewName("login");
+//        return mav;
+//    }
+
 
     @GetMapping("secure/article-details")
     public ModelAndView getAllUserArticles() {

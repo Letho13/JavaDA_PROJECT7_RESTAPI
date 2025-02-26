@@ -4,6 +4,7 @@ import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.service.CurvePointService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Controller
 public class CurveController {
 
@@ -35,18 +36,19 @@ public class CurveController {
     }
 
     @GetMapping("/curvePoint/add")
-    public String addCurveForm(CurvePoint curvePoint) {
+    public String addCurveForm(CurvePoint curvePoint, Model model) {
+        model.addAttribute("curvePoint",curvePoint);
         return "curvePoint/add";
     }
 
     @PostMapping("/curvePoint/validate")
-    public String validate(@Valid CurvePoint curvePoint, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model ,RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "curvePoint/add";
         }
         curvePointService.addCurvePoint(curvePoint);
         redirectAttributes.addFlashAttribute("successMessage", "CurvePoint ajouté avec succès !");
-
+        model.addAttribute("curvePoints",curvePoint);
         // TODO: check data valid and save to db, after saving return Curve list
         return "redirect:/curvePoint/add";
     }

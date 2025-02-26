@@ -3,13 +3,11 @@ package com.nnk.springboot.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -24,10 +22,10 @@ public class CurvePoint {
     private Integer id;
 
     private Integer curveId;
-    private Timestamp asOfDate;
-    private Double term;
-    private Double value;
-    private Timestamp creationDate;
+    private LocalDateTime asOfDate;
+    private double term;
+    private double value;
+    private LocalDateTime creationDate;
 
     // TODO: Map columns in data table CURVEPOINT with corresponding java fields
 }

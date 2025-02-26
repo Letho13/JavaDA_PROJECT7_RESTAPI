@@ -2,7 +2,7 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.service.BidListService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Controller
 public class BidListController {
 
@@ -31,16 +31,18 @@ public class BidListController {
     }
 
     @GetMapping("/bidList/add")
-    public String addBidForm(BidList bid) {
+    public String addBidForm(BidList bid, Model model) {
+    model.addAttribute("bidList",bid);
         return "bidList/add";
     }
 
     @PostMapping("/bidList/validate")
-    public String validate(@Valid BidList bid, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String validate(@Valid BidList bid, BindingResult result, Model model,RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "bidList/add";
         }
         bidListService.addBid(bid);
+        model.addAttribute("bidLists",bid);
         redirectAttributes.addFlashAttribute("successMessage", "Bid ajouté avec succès !");
         return "redirect:/bidList/list";
     }
@@ -49,7 +51,7 @@ public class BidListController {
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
 
         BidList bid = bidListService.getBidById(id);
-        model.addAttribute("bid", bid);
+        model.addAttribute("bidList", bid);
         // TODO: get Bid by Id and to model then show to the form
         return "bidList/update";
     }
@@ -63,6 +65,7 @@ public class BidListController {
         }
 
         bidListService.updateBid(id, bidList);
+
 
         // TODO: check required fields, if valid call service to update Bid and return list Bid
         return "redirect:/bidList/list";

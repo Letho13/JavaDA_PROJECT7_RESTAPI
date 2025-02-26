@@ -22,9 +22,9 @@ public class BidListService {
         bidListRepository.save(bid);
     }
 
-    public BidList getBidById(Integer bidListId) {
-        return bidListRepository.findById(bidListId)
-                .orElseThrow(() -> new NoSuchElementException("Bid avec l'ID " + bidListId + " introuvable !"));
+    public BidList getBidById(Integer id) {
+        return bidListRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Bid avec l'ID " + id + " introuvable !"));
     }
 
     public void updateBid(Integer id, BidList newBid) {

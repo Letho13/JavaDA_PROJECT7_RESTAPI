@@ -4,6 +4,7 @@ import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.service.TradeService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,11 +19,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
+
 @Controller
 public class TradeController {
 
-    TradeService tradeService;
+    private final TradeService tradeService;
     // TODO: Inject Trade service
 
     @RequestMapping("/trade/list")
@@ -34,17 +36,19 @@ public class TradeController {
     }
 
     @GetMapping("/trade/add")
-    public String addTrade(Trade trade) {
+    public String addTrade(Trade trade, Model model) {
+        model.addAttribute("trade", trade);
         return "trade/add";
     }
 
     @PostMapping("/trade/validate")
-    public String validate(@Valid Trade trade, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String validate(@Valid Trade trade, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "trade/add";
         }
         tradeService.addTrade(trade);
         redirectAttributes.addFlashAttribute("successMessage", "Bid ajouté avec succès !");
+        model.addAttribute("trades", trade);
         // TODO: check data valid and save to db, after saving return Trade list
         return "redirect:/trade/add";
     }
@@ -72,10 +76,10 @@ public class TradeController {
 
     @GetMapping("/trade/delete/{id}")
     public String deleteTrade(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-        try{
+        try {
             tradeService.deleteById(id);
             redirectAttributes.addFlashAttribute("successMessage", "Trade supprimé avec succès !");
-        }catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Erreur : Trade introuvable !");
         }
 

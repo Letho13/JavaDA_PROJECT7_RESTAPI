@@ -1,12 +1,10 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.repositories.UserRepository;
-import com.nnk.springboot.service.UserServiceImp;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import com.nnk.springboot.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,26 +14,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Controller
 public class UserController {
 
-    private UserRepository userRepository;
-    private UserServiceImp userServiceImp;
+    private final UserService userService;
+    public final PasswordEncoder passwordEncoder;
 
     @RequestMapping("/user/list")
     public String home(Model model) {
-
-        List<User> getAllUser = userServiceImp.getAllUserList();
+        List<User> getAllUser = userService.getAllUsers();
         model.addAttribute("users", getAllUser);
         return "user/list";
     }
 
     @GetMapping("/user/add")
-    public String addUser(User user) {
+    public String addUser(User user, Model model) {
+        model.addAttribute("user", user);
         return "user/add";
     }
 
@@ -43,7 +43,7 @@ public class UserController {
     public String validate(@Valid User user, BindingResult result, Model model) {
         if (!result.hasErrors()) {
 
-            userServiceImp.addUser(user);
+            userService.addUser(user);
 
             model.addAttribute("users", user);
             return "redirect:/user/list";
@@ -53,7 +53,7 @@ public class UserController {
 
     @GetMapping("/user/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        User user = userServiceImp.getUserById(id);
+        User user = userService.getUserById(id);
         user.setPassword("");
         model.addAttribute("user", user);
         return "user/update";
@@ -65,20 +65,28 @@ public class UserController {
         if (result.hasErrors()) {
             return "user/update";
         }
+        User existingUser = userService.getUserById(id);
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
-        user.setId(id);
-        userRepository.save(user);
-        model.addAttribute("users", userRepository.findAll());
+        if (!user.getPassword().isBlank()) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        existingUser.setFullname(user.getFullname());
+        existingUser.setUsername(user.getUsername());
+        existingUser.setRole(user.getRole());
+
+        userService.updateUser(id, existingUser);
+        model.addAttribute("users", user);
         return "redirect:/user/list";
     }
 
     @GetMapping("/user/delete/{id}")
-    public String deleteUser(@PathVariable("id") Integer id, Model model) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-        userRepository.delete(user);
-        model.addAttribute("users", userRepository.findAll());
+    public String deleteUser(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            userService.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "User supprimé avec succès !");
+        } catch (NoSuchElementException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur : User introuvable !");
+        }
         return "redirect:/user/list";
     }
 }

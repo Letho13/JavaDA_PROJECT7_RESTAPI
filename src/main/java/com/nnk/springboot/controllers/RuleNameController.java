@@ -6,6 +6,7 @@ import com.nnk.springboot.service.RatingService;
 import com.nnk.springboot.service.RuleNameService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,11 +21,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Controller
 public class RuleNameController {
 
-    RuleNameService ruleNameService;
+    private final RuleNameService ruleNameService;
     // TODO: Inject RuleName service
 
     @RequestMapping("/ruleName/list")
@@ -36,18 +37,20 @@ public class RuleNameController {
     }
 
     @GetMapping("/ruleName/add")
-    public String addRuleForm(RuleName bid) {
+    public String addRuleForm(RuleName ruleName, Model model) {
+        model.addAttribute("ruleName",ruleName);
         return "ruleName/add";
     }
 
     @PostMapping("/ruleName/validate")
-    public String validate(@Valid RuleName ruleName, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String validate(@Valid RuleName ruleName, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
             return "ruleName/add";
         }
 
         ruleNameService.addRuleName(ruleName);
+        model.addAttribute("ruleNames", ruleName);
         redirectAttributes.addFlashAttribute("successMessage", "RuleName ajouté avec succès !");
         // TODO: check data valid and save to db, after saving return RuleName list
         return "redirect:/ruleName/add";
@@ -56,8 +59,8 @@ public class RuleNameController {
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
 
-       RuleName ruleName = ruleNameService.getByIdRuleName(id);
-       model.addAttribute("ruleName",ruleName);
+        RuleName ruleName = ruleNameService.getByIdRuleName(id);
+        model.addAttribute("ruleName", ruleName);
         // TODO: get RuleName by Id and to model then show to the form
         return "ruleName/update";
     }
@@ -65,11 +68,11 @@ public class RuleNameController {
     @PostMapping("/ruleName/update/{id}")
     public String updateRuleName(@PathVariable("id") Integer id, @Valid RuleName ruleName,
                                  BindingResult result, Model model) {
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             return "ruleName/update";
         }
 
-        ruleNameService.updateRuleName(id,ruleName);
+        ruleNameService.updateRuleName(id, ruleName);
         // TODO: check required fields, if valid call service to update RuleName and return RuleName list
         return "redirect:/ruleName/list";
     }
@@ -77,7 +80,7 @@ public class RuleNameController {
     @GetMapping("/ruleName/delete/{id}")
     public String deleteRuleName(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
 
-        try{
+        try {
             ruleNameService.deleteById(id);
             redirectAttributes.addFlashAttribute("successMessage", "RuleName supprimé avec succès !");
         } catch (NoSuchElementException e) {
