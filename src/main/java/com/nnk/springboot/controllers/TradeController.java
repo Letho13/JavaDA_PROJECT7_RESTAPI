@@ -1,10 +1,15 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Trade;
+import com.nnk.springboot.domain.User;
+import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.service.TradeService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,12 +30,23 @@ import java.util.NoSuchElementException;
 public class TradeController {
 
     private final TradeService tradeService;
+    private final UserRepository userRepository;
+
     // TODO: Inject Trade service
 
     @RequestMapping("/trade/list")
     public String home(Model model) {
         List<Trade> getAllTradeList = tradeService.getAllTrade();
-        model.addAttribute("trade", getAllTradeList);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User loggedInUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+
+        model.addAttribute("username", loggedInUser.getUsername());
+
+        model.addAttribute("trades", getAllTradeList);
         // TODO: find all Trade, add to model
         return "trade/list";
     }
@@ -47,7 +63,7 @@ public class TradeController {
             return "trade/add";
         }
         tradeService.addTrade(trade);
-        redirectAttributes.addFlashAttribute("successMessage", "Bid ajouté avec succès !");
+        redirectAttributes.addFlashAttribute("successMessage", "Trade ajouté avec succès !");
         model.addAttribute("trades", trade);
         // TODO: check data valid and save to db, after saving return Trade list
         return "redirect:/trade/add";

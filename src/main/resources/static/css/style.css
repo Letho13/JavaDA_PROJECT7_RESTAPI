@@ -1,0 +1,19 @@
+footer {
+    display: flex;
+    justify-content: flex-end;  /* Positionne le contenu à droite */
+    align-items: center;
+    padding: 10px 20px;
+    background: #f1f1f1;
+    width: 100%;
+    position: fixed;  /* Fixe le footer en bas */
+    bottom: 0;
+    left: 0;
+}
+
+footer img {
+    max-width: 100%;  /* Empêche l'image de dépasser son conteneur */
+    height: auto;  /* Garde le ratio */
+    max-height: 80px;  /* Taille adaptée sans dépasser l'écran */
+    padding-right: 10px;  /* Petit espace à droite */
+}
+

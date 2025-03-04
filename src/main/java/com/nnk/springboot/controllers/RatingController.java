@@ -1,8 +1,13 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
+import com.nnk.springboot.domain.User;
+import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.service.RatingService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,20 +27,30 @@ import java.util.NoSuchElementException;
 public class RatingController {
 
     private final RatingService ratingService;
+    private final UserRepository userRepository;
 
     // TODO: Inject Rating service
 
     @RequestMapping("/rating/list")
     public String home(Model model) {
         List<Rating> allRating = ratingService.getAllRating();
-        model.addAttribute("rating", allRating);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User loggedInUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+
+        model.addAttribute("username", loggedInUser.getUsername());
+
+        model.addAttribute("ratings", allRating);
         // TODO: find all Rating, add to model
         return "rating/list";
     }
 
     @GetMapping("/rating/add")
     public String addRatingForm(Rating rating, Model model) {
-        model.addAttribute("rating",rating);
+        model.addAttribute("rating", rating);
         return "rating/add";
     }
 
@@ -48,7 +63,7 @@ public class RatingController {
 
         ratingService.addRating(rating);
         redirectAttributes.addFlashAttribute("successMessage", "Rating ajouté avec succès !");
-        model.addAttribute("ratings",rating);
+        model.addAttribute("ratings", rating);
         // TODO: check data valid and save to db, after saving return Rating list
         return "redirect:/rating/add";
     }

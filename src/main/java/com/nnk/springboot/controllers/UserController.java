@@ -2,8 +2,12 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
 
+import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,10 +29,20 @@ public class UserController {
 
     private final UserService userService;
     public final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     @RequestMapping("/user/list")
     public String home(Model model) {
         List<User> getAllUser = userService.getAllUsers();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User loggedInUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+
+        model.addAttribute("username", loggedInUser.getUsername());
+
         model.addAttribute("users", getAllUser);
         return "user/list";
     }

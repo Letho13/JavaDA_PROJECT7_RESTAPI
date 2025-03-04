@@ -1,10 +1,15 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.domain.User;
+import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.service.CurvePointService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,31 +29,40 @@ import java.util.NoSuchElementException;
 public class CurveController {
 
     private final CurvePointService curvePointService;
+    private final UserRepository userRepository;
 
     // TODO: Inject Curve Point service
 
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
         List<CurvePoint> allCurvePoint = curvePointService.getAllCurvePoint();
-        model.addAttribute("curvePoint",allCurvePoint);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User loggedInUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+
+        model.addAttribute("username", loggedInUser.getUsername());
+        model.addAttribute("curvePoints", allCurvePoint);
         // TODO: find all Curve Point, add to model
         return "curvePoint/list";
     }
 
     @GetMapping("/curvePoint/add")
     public String addCurveForm(CurvePoint curvePoint, Model model) {
-        model.addAttribute("curvePoint",curvePoint);
+        model.addAttribute("curvePoint", curvePoint);
         return "curvePoint/add";
     }
 
     @PostMapping("/curvePoint/validate")
-    public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model ,RedirectAttributes redirectAttributes) {
+    public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "curvePoint/add";
         }
         curvePointService.addCurvePoint(curvePoint);
         redirectAttributes.addFlashAttribute("successMessage", "CurvePoint ajouté avec succès !");
-        model.addAttribute("curvePoints",curvePoint);
+        model.addAttribute("curvePoints", curvePoint);
         // TODO: check data valid and save to db, after saving return Curve list
         return "redirect:/curvePoint/add";
     }
@@ -65,11 +79,11 @@ public class CurveController {
 
     @PostMapping("/curvePoint/update/{id}")
     public String updateCurvePoint(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
-                             BindingResult result, Model model) {
-        if(result.hasErrors()){
+                                   BindingResult result, Model model) {
+        if (result.hasErrors()) {
             return "curvePoint/update";
         }
-        curvePointService.updateCurvePoint(id,curvePoint);
+        curvePointService.updateCurvePoint(id, curvePoint);
         // TODO: check required fields, if valid call service to update Curve and return Curve list
         return "redirect:/curvePoint/list";
     }

@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 @Service
 public class RuleNameService {
 
-    RuleNameRepository ruleNameRepository;
+    private final RuleNameRepository ruleNameRepository;
 
     public List<RuleName> getAllRuleName() {
         return ruleNameRepository.findAll();

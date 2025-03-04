@@ -1,8 +1,13 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.BidList;
+import com.nnk.springboot.domain.User;
+import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.service.BidListService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,35 +19,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.validation.Valid;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Controller
 public class BidListController {
 
     private final BidListService bidListService;
+    private final UserRepository userRepository;
 
     @RequestMapping("/bidList/list")
     public String home(Model model) {
         List<BidList> allBildList = bidListService.getAllBidList();
-        model.addAttribute("bidList", allBildList);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User loggedInUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+
+        model.addAttribute("username", loggedInUser.getUsername());
+        model.addAttribute("bidLists", allBildList);
+
         return "bidList/list";
     }
 
     @GetMapping("/bidList/add")
     public String addBidForm(BidList bid, Model model) {
-    model.addAttribute("bidList",bid);
+        model.addAttribute("bidList", bid);
         return "bidList/add";
     }
 
     @PostMapping("/bidList/validate")
-    public String validate(@Valid BidList bid, BindingResult result, Model model,RedirectAttributes redirectAttributes) {
+    public String validate(@Valid BidList bid, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "bidList/add";
         }
         bidListService.addBid(bid);
-        model.addAttribute("bidLists",bid);
+
+        model.addAttribute("bidLists", bid);
         redirectAttributes.addFlashAttribute("successMessage", "Bid ajouté avec succès !");
         return "redirect:/bidList/list";
     }
@@ -66,7 +81,6 @@ public class BidListController {
 
         bidListService.updateBid(id, bidList);
 
-
         // TODO: check required fields, if valid call service to update Bid and return list Bid
         return "redirect:/bidList/list";
     }
@@ -84,5 +98,6 @@ public class BidListController {
         // TODO: Find Bid by Id and delete the bid, return to Bid list
         return "redirect:/bidList/list";
     }
+
 
 }

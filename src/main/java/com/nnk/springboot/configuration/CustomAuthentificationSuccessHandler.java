@@ -1,6 +1,5 @@
 package com.nnk.springboot.configuration;
 
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,6 +36,9 @@ public class CustomAuthentificationSuccessHandler implements AuthenticationSucce
         } else if (roles.contains("ROLE_USER")) {
             redirectURL = "/bidList/add";
         }
+
+        log.info("✅ CustomAuthentificationSuccessHandler appelé !");
+        System.out.println("✅ CustomAuthentificationSuccessHandler appelé !");
 
         response.sendRedirect(request.getContextPath() + redirectURL);
     }

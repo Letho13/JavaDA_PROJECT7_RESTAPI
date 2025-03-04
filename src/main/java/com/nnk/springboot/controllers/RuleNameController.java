@@ -1,12 +1,13 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.service.RatingService;
+import com.nnk.springboot.domain.User;
+import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.service.RuleNameService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,12 +27,22 @@ import java.util.NoSuchElementException;
 public class RuleNameController {
 
     private final RuleNameService ruleNameService;
+    private final UserRepository userRepository;
+
     // TODO: Inject RuleName service
 
     @RequestMapping("/ruleName/list")
     public String home(Model model) {
         List<RuleName> getAllRule = ruleNameService.getAllRuleName();
-        model.addAttribute("ruleName", getAllRule);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User loggedInUser= userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+
+        model.addAttribute("username", loggedInUser.getUsername());
+        model.addAttribute("ruleNames", getAllRule);
         // TODO: find all RuleName, add to model
         return "ruleName/list";
     }
