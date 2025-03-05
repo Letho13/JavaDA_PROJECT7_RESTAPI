@@ -38,7 +38,7 @@
                 <label for="buyQuantity" class="col-sm-2 control-label">Buy Quantity</label>
                 <div class="col-sm-10">
                     <input type="number" th:field="*{buyQuantity}" id="buyQuantity" placeholder="Buy Quantity"
-                           class="col-4">
+                           class="col-4" step="any">
                     <p class="text-danger" th:if="${#fields.hasErrors('buyQuantity')}" th:errors="*{buyQuantity}"></p>
                 </div>
             </div>

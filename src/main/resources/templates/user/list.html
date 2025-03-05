@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
     <title>Home</title>
@@ -14,7 +14,14 @@
 <div class="container">
     <div class="row">
         <div class="col-6">
-
+            <div class="col-6">
+                <a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
+                <a href="/curvePoint/list">Curve Points</a>&nbsp;|&nbsp;
+                <a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
+                <a href="/trade/list">Trade</a>&nbsp;|&nbsp;
+                <a href="/ruleName/list">Rule</a>&nbsp;|&nbsp;
+                <a href="/user/list" sec:authorize="hasRole('ROLE_ADMIN')">User</a>
+            </div>
         </div>
         <div class="col-6 text-right">
             <a href="/">Home</a>&nbsp;|&nbsp;<a href="/login">Login</a>
