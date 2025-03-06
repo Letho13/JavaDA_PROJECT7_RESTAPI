@@ -8,12 +8,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+
+
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
     public UserDetailsImpl(User user) {
         this.user = user;
     }
+
+    /**
+     * Retourne les autorités (rôles) de l'utilisateur authentifié.
+     * Cette méthode génère une liste d'autorités sous forme d'un {@link SimpleGrantedAuthority}
+     * en fonction du rôle de l'utilisateur.
+     *
+     * @return Une collection contenant l'autorité de l'utilisateur, sous la forme de {@link GrantedAuthority}.
+     */
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

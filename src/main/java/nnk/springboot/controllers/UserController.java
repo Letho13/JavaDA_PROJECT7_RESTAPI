@@ -41,8 +41,12 @@ public class UserController {
         User loggedInUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
 
-        model.addAttribute("username", loggedInUser.getUsername());
+        String role = loggedInUser.getRole();
+        boolean isAdmin = role.equals("ADMIN");
 
+        model.addAttribute("isAdmin", isAdmin);
+
+        model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("users", getAllUser);
         return "user/list";
     }

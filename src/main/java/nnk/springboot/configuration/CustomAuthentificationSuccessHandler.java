@@ -15,6 +15,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CustomAuthentificationSuccessHandler implements AuthenticationSuccessHandler {
 
+    /**
+     * Cette méthode est appelée après une connexion réussie d'un utilisateur.
+     * Elle récupère les rôles de l'utilisateur authentifié et redirige l'utilisateur vers la page appropriée
+     * en fonction de ses rôles.
+     *
+     * @param request La requête HTTP qui a initié la connexion.
+     * @param response La réponse HTTP qui sera envoyée à l'utilisateur.
+     * @param authentication L'objet {@link Authentication} contenant les détails de l'utilisateur authentifié,
+     *                       y compris ses rôles.
+     * @throws IOException Si une erreur survient lors de l'envoi de la réponse HTTP (par exemple, redirection échouée).
+     * @throws ServletException Si une erreur de servlet se produit lors du traitement de la requête ou de la réponse.
+     */
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,

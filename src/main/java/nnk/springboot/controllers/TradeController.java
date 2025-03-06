@@ -30,7 +30,6 @@ public class TradeController {
     private final TradeService tradeService;
     private final UserRepository userRepository;
 
-    // TODO: Inject Trade service
 
     @RequestMapping("/trade/list")
     public String home(Model model) {
@@ -42,10 +41,12 @@ public class TradeController {
         User loggedInUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
 
-        model.addAttribute("username", loggedInUser.getUsername());
+        String role = loggedInUser.getRole();
+        boolean isAdmin = role.equals("ADMIN");
 
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("trades", getAllTradeList);
-        // TODO: find all Trade, add to model
         return "trade/list";
     }
 
@@ -63,7 +64,6 @@ public class TradeController {
         tradeService.addTrade(trade);
         redirectAttributes.addFlashAttribute("successMessage", "Trade ajouté avec succès !");
         model.addAttribute("trades", trade);
-        // TODO: check data valid and save to db, after saving return Trade list
         return "redirect:/trade/list";
     }
 
@@ -72,7 +72,6 @@ public class TradeController {
 
         Trade trade = tradeService.getTradeById(id);
         model.addAttribute("trade", trade);
-        // TODO: get Trade by Id and to model then show to the form
         return "trade/update";
     }
 
@@ -84,7 +83,6 @@ public class TradeController {
         }
 
         tradeService.updateTrade(id, trade);
-        // TODO: check required fields, if valid call service to update Trade and return Trade list
         return "redirect:/trade/list";
     }
 
@@ -97,7 +95,6 @@ public class TradeController {
             redirectAttributes.addFlashAttribute("errorMessage", "Erreur : Trade introuvable !");
         }
 
-        // TODO: Find Trade by Id and delete the Trade, return to Trade list
         return "redirect:/trade/list";
     }
 }

@@ -27,6 +27,7 @@ public class BidListService {
                 .orElseThrow(() -> new NoSuchElementException("Bid avec l'ID " + id + " introuvable !"));
     }
 
+
     public void updateBid(Integer id, BidList newBid) {
         BidList existingBid = bidListRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Bid avec l'ID " + id + " introuvable !"));

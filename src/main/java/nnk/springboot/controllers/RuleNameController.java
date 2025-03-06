@@ -29,7 +29,6 @@ public class RuleNameController {
     private final RuleNameService ruleNameService;
     private final UserRepository userRepository;
 
-    // TODO: Inject RuleName service
 
     @RequestMapping("/ruleName/list")
     public String home(Model model) {
@@ -38,18 +37,22 @@ public class RuleNameController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User loggedInUser= userRepository.findByUsername(username)
+        User loggedInUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+
+        String role = loggedInUser.getRole();
+        boolean isAdmin = role.equals("ADMIN");
+
+        model.addAttribute("isAdmin", isAdmin);
 
         model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("ruleNames", getAllRule);
-        // TODO: find all RuleName, add to model
         return "ruleName/list";
     }
 
     @GetMapping("/ruleName/add")
     public String addRuleForm(RuleName ruleName, Model model) {
-        model.addAttribute("ruleName",ruleName);
+        model.addAttribute("ruleName", ruleName);
         return "ruleName/add";
     }
 
@@ -63,7 +66,6 @@ public class RuleNameController {
         ruleNameService.addRuleName(ruleName);
         model.addAttribute("ruleNames", ruleName);
         redirectAttributes.addFlashAttribute("successMessage", "RuleName ajouté avec succès !");
-        // TODO: check data valid and save to db, after saving return RuleName list
         return "redirect:/ruleName/list";
     }
 
@@ -72,7 +74,6 @@ public class RuleNameController {
 
         RuleName ruleName = ruleNameService.getByIdRuleName(id);
         model.addAttribute("ruleName", ruleName);
-        // TODO: get RuleName by Id and to model then show to the form
         return "ruleName/update";
     }
 
@@ -84,7 +85,6 @@ public class RuleNameController {
         }
 
         ruleNameService.updateRuleName(id, ruleName);
-        // TODO: check required fields, if valid call service to update RuleName and return RuleName list
         return "redirect:/ruleName/list";
     }
 
@@ -98,7 +98,6 @@ public class RuleNameController {
             redirectAttributes.addFlashAttribute("errorMessage", "Erreur : RuleName introuvable !");
         }
 
-        // TODO: Find RuleName by Id and delete the RuleName, return to Rule list
         return "redirect:/ruleName/list";
     }
 }

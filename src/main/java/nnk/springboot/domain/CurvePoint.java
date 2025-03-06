@@ -27,5 +27,4 @@ public class CurvePoint {
     private double value;
     private LocalDateTime creationDate;
 
-    // TODO: Map columns in data table CURVEPOINT with corresponding java fields
 }

@@ -29,8 +29,6 @@ public class CurveController {
     private final CurvePointService curvePointService;
     private final UserRepository userRepository;
 
-    // TODO: Inject Curve Point service
-
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
         List<CurvePoint> allCurvePoint = curvePointService.getAllCurvePoint();
@@ -41,9 +39,13 @@ public class CurveController {
         User loggedInUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
 
+        String role = loggedInUser.getRole();
+        boolean isAdmin = role.equals("ADMIN");
+
+        model.addAttribute("isAdmin",isAdmin);
+
         model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("curvePoints", allCurvePoint);
-        // TODO: find all Curve Point, add to model
         return "curvePoint/list";
     }
 
@@ -61,7 +63,6 @@ public class CurveController {
         curvePointService.addCurvePoint(curvePoint);
         redirectAttributes.addFlashAttribute("successMessage", "CurvePoint ajouté avec succès !");
         model.addAttribute("curvePoints", curvePoint);
-        // TODO: check data valid and save to db, after saving return Curve list
         return "redirect:/curvePoint/list";
     }
 
@@ -71,7 +72,6 @@ public class CurveController {
         CurvePoint curvePoint = curvePointService.getCurvePointById(id);
         model.addAttribute("curvePoint", curvePoint);
 
-        // TODO: get CurvePoint by Id and to model then show to the form
         return "curvePoint/update";
     }
 
@@ -82,7 +82,6 @@ public class CurveController {
             return "curvePoint/update";
         }
         curvePointService.updateCurvePoint(id, curvePoint);
-        // TODO: check required fields, if valid call service to update Curve and return Curve list
         return "redirect:/curvePoint/list";
     }
 
@@ -95,7 +94,6 @@ public class CurveController {
         } catch (NoSuchElementException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Erreur : CurvePoint introuvable !");
         }
-        // TODO: Find Curve by Id and delete the Curve, return to Curve list
         return "redirect:/curvePoint/list";
     }
 }

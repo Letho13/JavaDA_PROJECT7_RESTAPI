@@ -20,6 +20,18 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
+    /**
+     * Configure et fournit un gestionnaire d'authentification {@link AuthenticationManager}.
+     *
+     * Cette méthode crée un {@link ProviderManager} avec un {@link DaoAuthenticationProvider}
+     * qui utilise le service utilisateur et l'encodeur de mot de passe fournis pour l'authentification.
+     *
+     * @param userService Le service de gestion des utilisateurs, utilisé pour charger les détails des utilisateurs.
+     *@param passwordEncoder L'encodeur de mots de passe, utilisé pour hacher et vérifier les mots de passe des utilisateurs.
+     * @return Un {@link AuthenticationManager} configuré pour gérer l'authentification des utilisateurs.
+     * @throws Exception Si une erreur survient lors de la création du gestionnaire d'authentification.
+     */
+
     @Bean
     public AuthenticationManager authenticationManager(UserService userService, PasswordEncoder passwordEncoder) throws Exception {
         return new ProviderManager(List.of(new DaoAuthenticationProvider() {{
@@ -28,10 +40,23 @@ public class SecurityConfig {
         }}));
     }
 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
+    /**
+     * Configure la chaîne de filtres de sécurité pour gérer l'accès aux pages de l'application.
+     * <p>
+     * Cette méthode définit les règles d'autorisation des requêtes HTTP, la configuration de la page
+     * de connexion, la gestion de la déconnexion et le traitement des erreurs d'accès.
+     *
+     * @param http L'objet {@link HttpSecurity} utilisé pour configurer la sécurité HTTP.
+     * @return Un {@link SecurityFilterChain} configuré avec les règles de sécurité définies.
+     * @throws Exception Si une erreur survient lors de la configuration de la sécurité.
+     */
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

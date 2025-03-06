@@ -29,7 +29,6 @@ public class RatingController {
     private final RatingService ratingService;
     private final UserRepository userRepository;
 
-    // TODO: Inject Rating service
 
     @RequestMapping("/rating/list")
     public String home(Model model) {
@@ -41,10 +40,13 @@ public class RatingController {
         User loggedInUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
 
-        model.addAttribute("username", loggedInUser.getUsername());
+        String role = loggedInUser.getRole();
+        boolean isAdmin = role.equals("ADMIN");
 
+        model.addAttribute("isAdmin",isAdmin);
+
+        model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("ratings", allRating);
-        // TODO: find all Rating, add to model
         return "rating/list";
     }
 
@@ -64,7 +66,6 @@ public class RatingController {
         ratingService.addRating(rating);
         redirectAttributes.addFlashAttribute("successMessage", "Rating ajouté avec succès !");
         model.addAttribute("ratings", rating);
-        // TODO: check data valid and save to db, after saving return Rating list
         return "redirect:/rating/list";
     }
 
@@ -74,7 +75,6 @@ public class RatingController {
         Rating rating = ratingService.getRatingById(id);
         model.addAttribute("rating", rating);
 
-        // TODO: get Rating by Id and to model then show to the form
         return "rating/update";
     }
 
@@ -88,7 +88,6 @@ public class RatingController {
 
         ratingService.updateRating(id, rating);
 
-        // TODO: check required fields, if valid call service to update Rating and return Rating list
         return "redirect:/rating/list";
     }
 
@@ -102,7 +101,6 @@ public class RatingController {
             redirectAttributes.addFlashAttribute("errorMessage", "Erreur : Rating introuvable !");
         }
 
-        // TODO: Find Rating by Id and delete the Rating, return to Rating list
         return "redirect:/rating/list";
     }
 }

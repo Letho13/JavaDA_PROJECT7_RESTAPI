@@ -28,6 +28,7 @@ public class BidListController {
     private final BidListService bidListService;
     private final UserRepository userRepository;
 
+
     @RequestMapping("/bidList/list")
     public String home(Model model) {
         List<BidList> allBildList = bidListService.getAllBidList();
@@ -41,7 +42,7 @@ public class BidListController {
         String role = loggedInUser.getRole();
         boolean isAdmin = role.equals("ADMIN");
 
-        model.addAttribute("isAdmin",isAdmin);
+        model.addAttribute("isAdmin", isAdmin);
 //        model.addAttribute("role",role);
         model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("bidLists", allBildList);
@@ -72,7 +73,6 @@ public class BidListController {
 
         BidList bid = bidListService.getBidById(id);
         model.addAttribute("bidList", bid);
-        // TODO: get Bid by Id and to model then show to the form
         return "bidList/update";
     }
 
@@ -86,7 +86,6 @@ public class BidListController {
 
         bidListService.updateBid(id, bidList);
 
-        // TODO: check required fields, if valid call service to update Bid and return list Bid
         return "redirect:/bidList/list";
     }
 
@@ -100,7 +99,6 @@ public class BidListController {
             redirectAttributes.addFlashAttribute("errorMessage", "Erreur : Bid introuvable !");
         }
 
-        // TODO: Find Bid by Id and delete the bid, return to Bid list
         return "redirect:/bidList/list";
     }
 

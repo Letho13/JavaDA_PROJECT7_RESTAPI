@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
     <title>Home</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+    <style>
+        .inline-links a, .inline-links div {
+            display: inline;
+        }
+    </style>
+
 </head>
 <body>
+
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <div class="container">
     <div class="row">
-        <div class="col-6">
-            <div class="col-6">
-                <a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
-                <a href="/curvePoint/list">Curve Points</a>&nbsp;|&nbsp;
-                <a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
-                <a href="/trade/list">Trade</a>&nbsp;|&nbsp;
-                <a href="/ruleName/list">Rule</a>&nbsp;|&nbsp;
-                <a href="/user/list" sec:authorize="hasRole('ROLE_ADMIN')">User</a>
+        <div class="col-6 inline-links">
+            <a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
+            <a href="/curvePoint/list">Curve Points</a>&nbsp;|&nbsp;
+            <a href="/rating/list">Ratings</a>&nbsp;|&nbsp;
+            <a href="/trade/list">Trade</a>&nbsp;|&nbsp;
+            <a href="/ruleName/list">Rule</a>&nbsp;|&nbsp;
+            <div th:if="${isAdmin}">
+                <a href="/user/list">User</a>&nbsp;|&nbsp;
             </div>
         </div>
         <div class="col-6 text-right">

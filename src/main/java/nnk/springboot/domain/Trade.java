@@ -47,5 +47,4 @@ public class Trade {
     private String side;
 
 
-    // TODO: Map columns in data table TRADE with corresponding java fields
 }
