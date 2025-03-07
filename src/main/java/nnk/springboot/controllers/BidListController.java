@@ -43,7 +43,6 @@ public class BidListController {
         boolean isAdmin = role.equals("ADMIN");
 
         model.addAttribute("isAdmin", isAdmin);
-//        model.addAttribute("role",role);
         model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("bidLists", allBildList);
 

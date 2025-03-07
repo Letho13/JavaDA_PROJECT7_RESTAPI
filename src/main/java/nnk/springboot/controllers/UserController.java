@@ -85,7 +85,7 @@ public class UserController {
         }
         User existingUser = userService.getUserById(id);
 
-        if (!user.getPassword().isBlank()) {
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         existingUser.setFullname(user.getFullname());
