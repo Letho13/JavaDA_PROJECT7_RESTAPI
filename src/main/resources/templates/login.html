@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+    <meta charset="UTF-8">
+    <title>Login Screen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .login-container {
+            display: inline-block;
+            text-align: left;
+            padding: 20px;
+            border: 1px solid #000;
+            background-color: #f9f9f9;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 200px;
+            padding: 5px;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .logo {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<h2>Login Screen</h2>
+
+<div class="login-container">
+    <h3>Login with Username and Password</h3>
+
+
+    <div th:if="${param.error}" class="error-message">
+        Invalid username or password.
+    </div>
+
+    <div th:if="${param.logout}" class="error-message" style="color: green;">
+        You have been logged out successfully.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="input-group">
+            <label for="username">User:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+</body>
+</html>
