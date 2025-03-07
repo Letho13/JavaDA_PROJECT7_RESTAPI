@@ -31,7 +31,6 @@ public class RuleNameServiceTests {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Simuler le comportement des objets RuleName
         when(ruleName1.getId()).thenReturn(1);
         when(ruleName1.getName()).thenReturn("Rule1");
         when(ruleName1.getDescription()).thenReturn("Description1");
@@ -51,13 +50,10 @@ public class RuleNameServiceTests {
 
     @Test
     public void testGetAllRuleName() {
-        // Arrange
         when(ruleNameRepository.findAll()).thenReturn(Arrays.asList(ruleName1, ruleName2));
 
-        // Act
         List<RuleName> result = ruleNameService.getAllRuleName();
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         verify(ruleNameRepository, times(1)).findAll();
@@ -65,25 +61,19 @@ public class RuleNameServiceTests {
 
     @Test
     public void testAddRuleName() {
-        // Arrange
         when(ruleNameRepository.save(any(RuleName.class))).thenReturn(ruleName1);
 
-        // Act
         ruleNameService.addRuleName(ruleName1);
 
-        // Assert
         verify(ruleNameRepository, times(1)).save(ruleName1);
     }
 
     @Test
     public void testGetByIdRuleName() {
-        // Arrange
         when(ruleNameRepository.findById(1)).thenReturn(Optional.of(ruleName1));
 
-        // Act
         RuleName result = ruleNameService.getByIdRuleName(1);
 
-        // Assert
         assertNotNull(result);
         assertEquals(ruleName1, result);
         verify(ruleNameRepository, times(1)).findById(1);
@@ -91,12 +81,10 @@ public class RuleNameServiceTests {
 
     @Test
     public void testUpdateRuleName() {
-        // Arrange
         RuleName updatedRuleName = mock(RuleName.class);
         when(ruleNameRepository.findById(1)).thenReturn(Optional.of(ruleName1));
         when(ruleNameRepository.save(any(RuleName.class))).thenReturn(ruleName1);
 
-        // Simuler que le `updatedRuleName` possède des données modifiées
         when(updatedRuleName.getName()).thenReturn("UpdatedRule1");
         when(updatedRuleName.getDescription()).thenReturn("UpdatedDescription1");
         when(updatedRuleName.getJson()).thenReturn("{\"newKey\":\"newValue\"}");
@@ -104,24 +92,19 @@ public class RuleNameServiceTests {
         when(updatedRuleName.getSqlStr()).thenReturn("SELECT * FROM table WHERE updated_condition");
         when(updatedRuleName.getSqlPart()).thenReturn("AND updated_condition = 'new_value'");
 
-        // Act
         ruleNameService.updateRuleName(1, updatedRuleName);
 
-        // Assert
         verify(ruleNameRepository, times(1)).findById(1);
         verify(ruleNameRepository, times(1)).save(ruleName1);
     }
 
     @Test
     public void testDeleteById() {
-        // Arrange
         when(ruleNameRepository.existsById(1)).thenReturn(true);
         doNothing().when(ruleNameRepository).deleteById(1);
 
-        // Act
         ruleNameService.deleteById(1);
 
-        // Assert
         verify(ruleNameRepository, times(1)).deleteById(1);
     }
 }

@@ -31,7 +31,6 @@ public class RatingServiceTests {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Simuler le comportement des objets Rating
         when(rating1.getId()).thenReturn(1);
         when(rating1.getMoodysRating()).thenReturn("AAA");
         when(rating1.getSandPRating()).thenReturn("AA+");
@@ -47,13 +46,10 @@ public class RatingServiceTests {
 
     @Test
     public void testGetAllRating() {
-        // Arrange
         when(ratingRepository.findAll()).thenReturn(Arrays.asList(rating1, rating2));
 
-        // Act
         List<Rating> result = ratingService.getAllRating();
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         verify(ratingRepository, times(1)).findAll();
@@ -61,25 +57,19 @@ public class RatingServiceTests {
 
     @Test
     public void testAddRating() {
-        // Arrange
         when(ratingRepository.save(any(Rating.class))).thenReturn(rating1);
 
-        // Act
         ratingService.addRating(rating1);
 
-        // Assert
         verify(ratingRepository, times(1)).save(rating1);
     }
 
     @Test
     public void testGetRatingById() {
-        // Arrange
         when(ratingRepository.findById(1)).thenReturn(Optional.of(rating1));
 
-        // Act
         Rating result = ratingService.getRatingById(1);
 
-        // Assert
         assertNotNull(result);
         assertEquals(rating1, result);
         verify(ratingRepository, times(1)).findById(1);
@@ -87,35 +77,28 @@ public class RatingServiceTests {
 
     @Test
     public void testUpdateRating() {
-        // Arrange
         Rating updatedRating = mock(Rating.class);
         when(ratingRepository.findById(1)).thenReturn(Optional.of(rating1));
         when(ratingRepository.save(any(Rating.class))).thenReturn(rating1);
 
-        // Simuler que le `updatedRating` possède des données modifiées
         when(updatedRating.getMoodysRating()).thenReturn("AA+");
         when(updatedRating.getSandPRating()).thenReturn("A+");
         when(updatedRating.getFitchRating()).thenReturn("BB");
         when(updatedRating.getOrderNumber()).thenReturn(3);
 
-        // Act
         ratingService.updateRating(1, updatedRating);
 
-        // Assert
         verify(ratingRepository, times(1)).findById(1);
         verify(ratingRepository, times(1)).save(rating1);
     }
 
     @Test
     public void testDeleteById() {
-        // Arrange
         when(ratingRepository.existsById(1)).thenReturn(true);
         doNothing().when(ratingRepository).deleteById(1);
 
-        // Act
         ratingService.deleteById(1);
 
-        // Assert
         verify(ratingRepository, times(1)).deleteById(1);
     }
 }

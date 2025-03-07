@@ -31,7 +31,6 @@ public class TradeServiceTests {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Simuler le comportement des objets Trade
         when(trade1.getId()).thenReturn(1);
         when(trade1.getAccount()).thenReturn("Account1");
         when(trade1.getType()).thenReturn("Type1");
@@ -45,13 +44,10 @@ public class TradeServiceTests {
 
     @Test
     public void testGetAllTrade() {
-        // Arrange
         when(tradeRepository.findAll()).thenReturn(Arrays.asList(trade1, trade2));
 
-        // Act
         List<Trade> result = tradeService.getAllTrade();
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         verify(tradeRepository, times(1)).findAll();
@@ -59,25 +55,19 @@ public class TradeServiceTests {
 
     @Test
     public void testAddTrade() {
-        // Arrange
         when(tradeRepository.save(any(Trade.class))).thenReturn(trade1);
 
-        // Act
         tradeService.addTrade(trade1);
 
-        // Assert
         verify(tradeRepository, times(1)).save(trade1);
     }
 
     @Test
     public void testGetTradeById() {
-        // Arrange
         when(tradeRepository.findById(1)).thenReturn(Optional.of(trade1));
 
-        // Act
         Trade result = tradeService.getTradeById(1);
 
-        // Assert
         assertNotNull(result);
         assertEquals(trade1, result);
         verify(tradeRepository, times(1)).findById(1);
@@ -85,34 +75,27 @@ public class TradeServiceTests {
 
     @Test
     public void testUpdateTrade() {
-        // Arrange
         Trade updatedTrade = mock(Trade.class);
         when(tradeRepository.findById(1)).thenReturn(Optional.of(trade1));
         when(tradeRepository.save(any(Trade.class))).thenReturn(trade1);
 
-        // Simuler que le `updatedTrade` possède des données modifiées
         when(updatedTrade.getAccount()).thenReturn("UpdatedAccount");
         when(updatedTrade.getType()).thenReturn("UpdatedType");
         when(updatedTrade.getBuyQuantity()).thenReturn(500.0);
 
-        // Act
         tradeService.updateTrade(1, updatedTrade);
 
-        // Assert
         verify(tradeRepository, times(1)).findById(1);
         verify(tradeRepository, times(1)).save(trade1);
     }
 
     @Test
     public void testDeleteById() {
-        // Arrange
         when(tradeRepository.existsById(1)).thenReturn(true);
         doNothing().when(tradeRepository).deleteById(1);
 
-        // Act
         tradeService.deleteById(1);
 
-        // Assert
         verify(tradeRepository, times(1)).deleteById(1);
     }
 }

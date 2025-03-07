@@ -57,21 +57,17 @@ class BidListControllerTests {
         SecurityContextHolder.setContext(securityContext);
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
-        // Simuler l'utilisateur connecté
         when(authentication.getName()).thenReturn("testUser");
         User user = new User();
         user.setUsername("testUser");
         user.setRole("ADMIN");
         when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
 
-        // Simuler la liste des BidList
         List<BidList> bidLists = List.of(new BidList());
         when(bidListService.getAllBidList()).thenReturn(bidLists);
 
-        // Appel de la méthode
         String viewName = bidListController.home(model);
 
-        // Vérifier que la méthode s'exécute correctement
         verify(model).addAttribute(eq("isAdmin"), eq(true));
         verify(model).addAttribute(eq("username"), eq("testUser"));
         verify(model).addAttribute(eq("bidLists"), eq(bidLists));
