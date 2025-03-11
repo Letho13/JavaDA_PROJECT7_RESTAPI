@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
         existingUser.setFullname(newUser.getFullname());
         existingUser.setUsername(newUser.getUsername());
         if (newUser.getPassword() != null && !newUser.getPassword().isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(newUser.getPassword())); // 🔹 Mise à jour sécurisée
+            existingUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         }
         existingUser.setRole(newUser.getRole());
 
@@ -96,7 +96,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void createTemporaryAdmin() {
         String tempPassword = UUID.randomUUID().toString().substring(0, 8);
-        System.out.println("🔑 Mot de passe Admin temporaire : " + tempPassword);
+        System.out.println("🔑  Mot de passe Admin temporaire : " + tempPassword);
 
         User tempAdmin = new User();
         tempAdmin.setUsername("tempadmin");

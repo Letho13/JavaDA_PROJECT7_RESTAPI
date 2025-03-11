@@ -29,7 +29,7 @@ public class RatingController {
     private final RatingService ratingService;
     private final UserRepository userRepository;
 
-
+    // Affiche la liste des rating avec les informations de l'utilisateur connecté et du Role
     @RequestMapping("/rating/list")
     public String home(Model model) {
         List<Rating> allRating = ratingService.getAllRating();
@@ -38,69 +38,64 @@ public class RatingController {
         String username = authentication.getName();
 
         User loggedInUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur " + username + " introuvable avec l'username"));
 
         String role = loggedInUser.getRole();
         boolean isAdmin = role.equals("ADMIN");
 
-        model.addAttribute("isAdmin",isAdmin);
-
+        model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("ratings", allRating);
         return "rating/list";
     }
 
+    // Affiche le formulaire d'ajout d'un rating
     @GetMapping("/rating/add")
     public String addRatingForm(Rating rating, Model model) {
         model.addAttribute("rating", rating);
         return "rating/add";
     }
 
+    // Valide et enregistre un rating
     @PostMapping("/rating/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-
         if (result.hasErrors()) {
             return "rating/add";
         }
-
         ratingService.addRating(rating);
         redirectAttributes.addFlashAttribute("successMessage", "Rating ajouté avec succès !");
         model.addAttribute("ratings", rating);
         return "redirect:/rating/list";
     }
 
+    // Affiche le formulaire de mise à jour d'un rating récupéré par son id
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-
         Rating rating = ratingService.getRatingById(id);
         model.addAttribute("rating", rating);
-
         return "rating/update";
     }
 
+    // Met à jour un rating existant
     @PostMapping("/rating/update/{id}")
     public String updateRating(@PathVariable("id") Integer id, @Valid Rating rating,
                                BindingResult result, Model model) {
-
         if (result.hasErrors()) {
             return "rating/update";
         }
-
         ratingService.updateRating(id, rating);
-
         return "redirect:/rating/list";
     }
 
+    // Supprime un rating par son id
     @GetMapping("/rating/delete/{id}")
     public String deleteRating(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-
         try {
             ratingService.deleteById(id);
             redirectAttributes.addFlashAttribute("successMessage", "Rating supprimé avec succès !");
         } catch (NoSuchElementException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Erreur : Rating introuvable !");
         }
-
         return "redirect:/rating/list";
     }
 }

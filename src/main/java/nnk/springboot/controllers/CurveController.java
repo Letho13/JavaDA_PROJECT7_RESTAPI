@@ -29,6 +29,7 @@ public class CurveController {
     private final CurvePointService curvePointService;
     private final UserRepository userRepository;
 
+    // Affiche la liste des curvePoint avec les informations de l'utilisateur connecté et du Role
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
         List<CurvePoint> allCurvePoint = curvePointService.getAllCurvePoint();
@@ -37,24 +38,25 @@ public class CurveController {
         String username = authentication.getName();
 
         User loggedInUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur  " + username + "introuvable avec l'username"));
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur " + username + " introuvable avec l'username"));
 
         String role = loggedInUser.getRole();
         boolean isAdmin = role.equals("ADMIN");
 
-        model.addAttribute("isAdmin",isAdmin);
-
+        model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("username", loggedInUser.getUsername());
         model.addAttribute("curvePoints", allCurvePoint);
         return "curvePoint/list";
     }
 
+    // Affiche le formulaire d'ajout d'un curvePoint
     @GetMapping("/curvePoint/add")
     public String addCurveForm(CurvePoint curvePoint, Model model) {
         model.addAttribute("curvePoint", curvePoint);
         return "curvePoint/add";
     }
 
+    // Valide et enregistre un curvePoint
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -66,15 +68,15 @@ public class CurveController {
         return "redirect:/curvePoint/list";
     }
 
+    // Affiche le formulaire de mise à jour d'un curvePoint récupéré par son id
     @GetMapping("/curvePoint/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-
         CurvePoint curvePoint = curvePointService.getCurvePointById(id);
         model.addAttribute("curvePoint", curvePoint);
-
         return "curvePoint/update";
     }
 
+    // Met à jour un curvePoint existant
     @PostMapping("/curvePoint/update/{id}")
     public String updateCurvePoint(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
                                    BindingResult result, Model model) {
@@ -85,9 +87,9 @@ public class CurveController {
         return "redirect:/curvePoint/list";
     }
 
+    // Supprime un curvePoint par son id
     @GetMapping("/curvePoint/delete/{id}")
     public String deleteCurve(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
-
         try {
             curvePointService.deleteById(id);
             redirectAttributes.addFlashAttribute("successMessage", "CurvePoint supprimé avec succès !");
